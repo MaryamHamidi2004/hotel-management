@@ -5,6 +5,8 @@ import org.hibernate.Session;
 import util.HibernateUtil;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class RoomService {
@@ -40,6 +42,27 @@ public class RoomService {
             entityManager.getTransaction().commit();
             return saving;
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public List<Room> findAll(){
+        try(Session session = HibernateUtil.getSessionFactory().openSession()){
+            entityManager = session.getEntityManagerFactory().createEntityManager();
+
+            entityManager.getTransaction().begin();
+            String jpql = "select r from Room r";
+            return entityManager.createQuery(jpql, Room.class).getResultList();
+        }catch (Exception e){
+            return new ArrayList<>();
+        }
+    }
+
+    public Room get(long id){
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            entityManager = session.getEntityManagerFactory().createEntityManager();
+            return entityManager.find(Room.class, id);
+        }catch (Exception e){
             return null;
         }
     }
