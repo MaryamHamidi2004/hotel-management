@@ -5,6 +5,8 @@ import org.hibernate.Session;
 import util.HibernateUtil;
 
 import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class WorkerService {
@@ -62,6 +64,42 @@ public class WorkerService {
             return false;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public List<Worker> findAll(){
+        try(Session session = HibernateUtil.getSessionFactory().openSession()){
+            entityManager = session.getEntityManagerFactory().createEntityManager();
+
+            entityManager.getTransaction().begin();
+            String jpql = "select w from Worker w";
+            return entityManager.createQuery(jpql, Worker.class).getResultList();
+        }catch (Exception e){
+            return new ArrayList<>();
+        }
+    }
+
+    public Worker get(long id){
+        try(Session session = HibernateUtil.getSessionFactory().openSession()) {
+            entityManager = session.getEntityManagerFactory().createEntityManager();
+            return entityManager.find(Worker.class, id);
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    public Worker login(String username, String password){
+        try(Session session = HibernateUtil.getSessionFactory().openSession()){
+            entityManager = session.getEntityManagerFactory().createEntityManager();
+
+            entityManager.getTransaction().begin();
+            String jpql = "select w from Worker w where w.email = :username and w.password = :pass";
+            return entityManager.createQuery(jpql, Worker.class)
+                    .setParameter("username", username)
+                    .setParameter("pass", password)
+                    .getSingleResult();
+        }catch (Exception e){
+            return null;
         }
     }
 }

@@ -44,4 +44,19 @@ public class ManagerService {
             return null;
         }
     }
+
+    public Manager login(String username, String password){
+        try(Session session = HibernateUtil.getSessionFactory().openSession()){
+            entityManager = session.getEntityManagerFactory().createEntityManager();
+
+            entityManager.getTransaction().begin();
+            String jpql = "select m from Manager m where m.email = :username and m.password = :pass";
+            return entityManager.createQuery(jpql, Manager.class)
+                    .setParameter("username", username)
+                    .setParameter("pass", password)
+                    .getSingleResult();
+        }catch (Exception e){
+            return null;
+        }
+    }
 }

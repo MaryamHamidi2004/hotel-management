@@ -45,4 +45,19 @@ public class CustomerService {
             return null;
         }
     }
+
+    public Customer login(String username, String password){
+        try(Session session = HibernateUtil.getSessionFactory().openSession()){
+            entityManager = session.getEntityManagerFactory().createEntityManager();
+
+            entityManager.getTransaction().begin();
+            String jpql = "select c from Customer c where c.email = :username and c.password = :pass";
+            return entityManager.createQuery(jpql, Customer.class)
+                    .setParameter("username", username)
+                    .setParameter("pass", password)
+                    .getSingleResult();
+        }catch (Exception e){
+            return null;
+        }
+    }
 }
